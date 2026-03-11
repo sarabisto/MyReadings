@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>I miei libri - MyReadings</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" class="navbar-icon" width="48" height="48" alt="MyReadings"> MyReadings
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/books">Biblioteca</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="mybooks">Miei</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reviews">Recensioni</a>
+                </li>
+                <% if (user && user.role==='autore' ) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/addbook">Aggiungi</a>
+                    </li>
+                    <% } %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="notifications">Notifiche</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacts">Contatti</a>
+                        </li>
+                        <% if (user) { %>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="/logout">Logout</a>
+                            </li>
+                            <% } %>
+            </ul>
+            <form class="form-inline" action="/search" method="GET">
+                <input class="form-control mr-sm-2" type="search" name="q" placeholder="Cerca libri e autori"
+                    aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Cerca</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- CONTENUTO PAGINA -->
+    <div class="container my-5">
+        <h1 class="text-center">I miei libri</h1>
+        <% if (error) { %>
+            <div class="alert alert-warning" role="alert">
+                Devi selezionare almeno una stella per lasciare una recensione
+            </div>
+            <% } %>
+                <div class="row">
+                    <% if (books && books.length> 0) { %>
+                        <% books.forEach(book=> { %>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <img src="<%= book.cover || 'images/book-placeholder.jpg' %>" class="card-img-top"
+                                        alt="<%= book.title %>">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <%= book.title %>
+                                        </h5>
+                                        <p class="card-text">Genere: <%= book.genre || 'N/D' %>
+                                        </p>
+                                        <button class="btn btn-discover-more" data-toggle="modal"
+                                            data-target="#bookModal" data-id="<%= book.id %>"
+                                            data-title="<%= book.title %>" data-author="<%= book.author %>"
+                                            data-cover="<%= book.cover || 'images/book-placeholder.jpg' %>"
+                                            data-genre="<%= book.genre || 'N/D' %>"
+                                            data-pages="<%= book.pages || 'N/D' %>"
+                                            data-pubdate="<%= book.publication_date || 'N/D' %>"
+                                            data-publisher="<%= book.publisher || 'N/D' %>"
+                                            data-description="<%= book.description || 'Nessuna descrizione' %>">Dettagli</button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                         <div class="col-12 text-center">
+                            <p class="text-muted">Non hai ancora aggiunto libri ai tuoi MyBooks.</p>
+                            <a href="/books" class="btn btn-discover-more">Esplora il catalogo</a>
+                        </div>
+                    <% } %>
+                </div>
+    </div>
+
+    <!-- Modal per visualizzare i dettagli del libro -->
+    <div class="modal fade" id="bookModal" tabindex="-1" role="dialog" aria-labelledby="bookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookModalLabel">Dettagli del libro</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body modal-content-centered">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img id="modal-book-cover" src="images/book-placeholder.jpg" alt="Copertina del libro"
+                                class="img-fluid">
+                            <h5>Valutazione</h5>
+                            <div class="rating mb-3" id="rating-group">
+                                <% for (let i=5; i>= 1; i--) { %>
+                                    <input type="radio" name="rating" id="star<%= i %>" value="<%= i %>" />
+                                    <label for="star<%= i %>">&#9733;</label>
+                                    <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h5 id="modal-book-title">Titolo</h5>
+                            <p id="modal-book-author">Autore: </p>
+                            <p id="modal-book-pages">Numero di pagine: </p>
+                            <p id="modal-book-pubdate">Data di pubblicazione: </p>
+                            <p id="modal-book-genre">Genere letterario: </p>
+                            <p id="modal-book-publisher">Casa editrice: </p>
+                            <h5>Descrizione</h5>
+                            <p id="modal-book-description"></p>
+                            <form action="/api/review" method="POST">
+                                <!-- Campo nascosto per l'ID del libro -->
+                                <input type="hidden" id="modal-book-id" name="book_id" value="">
+                                <!-- Campo nascosto per il rating -->
+                                <input type="hidden" id="rating-input" name="rating" value="">
+                                <h5>Lascia una recensione</h5>
+                                <textarea name="review" class="form-control" rows="3"
+                                    placeholder="Scrivi la tua recensione..."></textarea>
+                                <button type="submit" class="btn btn-discover-more">Invia recensione</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2025 Copyright: MyReadings
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="/javascripts/modal.js"></script>
+</body>
+
+</html>

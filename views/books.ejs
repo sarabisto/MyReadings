@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Catalogo Libri - MyReadings</title>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" class="navbar-icon" width="48" height="48" alt="MyReadings"> MyReadings
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/books">Biblioteca</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/mybooks">Miei</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reviews">Recensioni</a>
+                </li>
+                <% if (user && user.role==='autore' ) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/addbook">Aggiungi</a>
+                    </li>
+                    <% } %>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/notifications">Notifiche</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contacts">Contatti</a>
+                        </li>
+                        <% if (user) { %>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="/logout">Logout</a>
+                            </li>
+                            <% } %>
+            </ul>
+            <form class="form-inline" action="/search" method="GET">
+                <input class="form-control mr-sm-2" type="search" name="q" placeholder="Cerca libri e autori"
+                    aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Cerca</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- CONTENUTO PAGINA -->
+    <!-- CATALOGO LIBRI -->
+    <div class="container my-5">
+        <h1 class="text-center">Catalogo Libri</h1>
+        <!-- Messaggio di errore se si prova a aggiungere a mybooks un libro che c'era già -->
+        <% if (error) { %>
+            <div class="alert alert-warning">
+                <%= error %>
+            </div>
+        <% } %>
+        <form action="/books" method="GET" class="mb-4">
+            <div class="form-row align-items-end justify-content-center">
+                <!-- GENERE -->
+                <div class="col-md-auto mb-2">
+                    <label for="genre">Genere:</label>
+                    <select name="genre" id="genre" class="form-control" style="width: 180px;">
+                        <option value="">Tutti</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Fantascienza">Fantascienza</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Memoir">Memoir</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Horror">Horror</option>
+                        <option value="Storico">Storico</option>
+                        <option value="Literary Fiction">Literary Fiction</option>
+                        <option value="Young Adult">Young Adult</option>
+                        <option value="Children's">Children's</option>
+                        <option value="Graphic Novel">Graphic Novel</option>
+                        <option value="Distopico">Distopico</option>
+                    </select>
+                </div>
+
+                <!-- ANNO DA -->
+                <div class="col-md-auto mb-2">
+                    <label for="fromYear">Anno da:</label>
+                    <input type="number" name="fromYear" id="fromYear" class="form-control" style="width: 100px;"
+                        placeholder="2000">
+                </div>
+
+                <!-- ANNO A -->
+                <div class="col-md-auto mb-2">
+                    <label for="toYear">a:</label>
+                    <input type="number" name="toYear" id="toYear" class="form-control" style="width: 100px;"
+                        placeholder="2024">
+                </div>
+
+                <!-- BOTTONE -->
+                <div class="col-md-auto mb-2 align-self-end">
+                    <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Filtra</button>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <% if (books.length> 0) { %>
+                <% books.forEach(book=> { %>
+                    <div class="col-md-3">
+                        <div class="book-card" data-toggle="modal" data-target="#bookModal-<%= book.id %>">
+                            <img src="<%= book.cover || 'images/book-placeholder.jpg' %>" alt="<%= book.title %>"
+                                class="book-cover">
+                            <div class="book-info">
+                                <h5>
+                                    <%= book.title %>
+                                </h5>
+                                <p>Autore: <%= book.author %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MODAL PER DETTAGLI LIBRO -->
+                    <div class="modal fade" id="bookModal-<%= book.id %>" tabindex="-1" role="dialog"
+                        aria-labelledby="bookModalLabel-<%= book.id %>" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="bookModalLabel-<%= book.id %>">
+                                        <%= book.title %>
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <img src="<%= book.cover || 'images/book-placeholder.jpg' %>"
+                                                alt="<%= book.title %>" class="img-fluid">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p><strong>Autore:</strong>
+                                                <%= book.author %>
+                                            </p>
+                                            <p><strong>Numero di pagine:</strong>
+                                                <%= book.pages || 'N/D' %>
+                                            </p>
+                                            <p><strong>Data di pubblicazione:</strong>
+                                                <%= book.publication_date || 'N/D' %>
+                                            </p>
+                                            <p><strong>Genere:</strong>
+                                                <%= book.genre || 'N/D' %>
+                                            </p>
+                                            <p><strong>Casa editrice:</strong>
+                                                <%= book.publisher || 'N/D' %>
+                                            </p>
+                                            <h5>Incipit</h5>
+                                            <p>
+                                                <%= book.description || 'Nessuna descrizione disponibile.' %>
+                                            </p>
+                                            <!-- Pulsante per aggiungere il libro a MyBooks -->
+                                            <form action="/api/add-to-mybooks" method="POST">
+                                                <input type="hidden" name="bookId" value="<%= book.id %>">
+                                                <button type="submit" class="btn btn-discover-more">Aggiungi a MyBooks</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <p class="text-center">Nessun libro disponibile nel catalogo.</p>
+                        <% } %>
+                </div>
+    </div>
+
+    <footer class="footer">
+        © 2025 Copyright: MyReadings
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

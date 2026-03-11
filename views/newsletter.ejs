@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>MyReadings – Newsletter</title>
+</head>
+
+<body>
+  <div class="auth-container d-flex align-items-center justify-content-center">
+    <div class="auth-form">
+      <h1>Iscriviti alla Newsletter</h1>
+      <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+          <%= error %>
+        </div>
+        <% } %>
+          <form action="/newsletter" method="POST">
+            <div class="form-group">
+              <input type="email" name="email" class="form-control" placeholder="Indirizzo Email" required>
+            </div>
+            <button type="submit" class="btn btn-discover-more">Iscriviti</button>
+          </form>
+    </div>
+  </div>
+  <script src="/javascripts/newsletter.js"></script>
+</body>
+
+</html>

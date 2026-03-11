@@ -1,0 +1,83 @@
+
+CREATE TABLE "Books" (
+	"id"	INTEGER,
+	"title"	TEXT NOT NULL,
+	"author_id"	INTEGER NOT NULL,
+	"pages"	INTEGER,
+	"publication_date"	INTEGER,
+	"genre"	TEXT,
+	"publisher"	TEXT,
+	"cover"	TEXT,
+	"author"	TEXT, description TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("author_id") REFERENCES "Users"("id")
+)
+
+CREATE TABLE NewsletterSubscribers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+)
+
+CREATE TABLE Notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  review_id INTEGER NOT NULL,
+  type TEXT NOT NULL,
+  message TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  read INTEGER DEFAULT 0, sender_id INTEGER REFERENCES Users(id), review_comment_id INTEGER REFERENCES ReviewComments(id),
+  FOREIGN KEY (user_id) REFERENCES Users(id),
+  FOREIGN KEY (review_id) REFERENCES Reviews(id)
+)
+
+CREATE TABLE ReviewComments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  review_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  comment TEXT NOT NULL,
+  created_at DATETIME DEFAULT (CURRENT_TIMESTAMP),
+  FOREIGN KEY (review_id) REFERENCES Reviews(id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
+)
+
+CREATE TABLE "ReviewLikes" (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    review_id INTEGER NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('like', 'dislike')),
+    UNIQUE(user_id, review_id),
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (review_id) REFERENCES Reviews(id)
+)
+
+CREATE TABLE Reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    book_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    review TEXT NOT NULL,
+    rating INTEGER CHECK(rating BETWEEN 1 AND 5),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES Books(id),
+    FOREIGN KEY (user_id) REFERENCES Users(id)
+)
+
+CREATE TABLE UserBooks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    rating INTEGER DEFAULT NULL,
+    review TEXT DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id),
+    FOREIGN KEY (book_id) REFERENCES Books(id)
+)
+
+CREATE TABLE Users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    surname TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    role TEXT CHECK(role IN ('autore', 'lettore')) NOT NULL
+)

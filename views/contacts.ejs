@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Contatti - MyReadings</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            <img src="images/logo.png" class="navbar-icon" width="48" height="48" alt="MyReadings"> MyReadings
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/books">Biblioteca</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="mybooks">Miei</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reviews">Recensioni</a>
+                </li>
+                <% if (user && user.role==='autore' ) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/addbook">Aggiungi</a>
+                    </li>
+                    <% } %>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="notifications">Notifiche</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contacts">Contatti</a>
+                        </li>
+                        <% if (user) { %>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" href="/logout">Logout</a>
+                            </li>
+                            <% } %>
+            </ul>
+            <form class="form-inline" action="/search" method="GET">
+                <input class="form-control mr-sm-2" type="search" name="q" placeholder="Cerca libri e autori"
+                    aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Cerca</button>
+            </form>
+        </div>
+    </nav>
+
+
+    <!-- CONTENUTO PAGINA -->
+    <div class="container my-5">
+        <h1 class="text-center">Contatti</h1>
+        <div class="contact-card">
+            <p><strong>Email:</strong> info@myreadings.com</p>
+            <p><strong>Telefono:</strong> +39 123 456 7890</p>
+            <p><strong>Indirizzo:</strong> Via Francesco Sforza 3, 20122 Milano MI, Italia</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2025 Copyright: MyReadings
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
